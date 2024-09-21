@@ -4,12 +4,20 @@ using UnityEngine;
 
 namespace Game
 {
+
+
     
     public class Camera : MonoBehaviour
     {
+        private Camera cam;
+
+        public float zoomSpeed = 2.0f;  // Speed of zooming in/out
+        public float minZoom = 5.0f;    // Minimum zoom level
+        public float maxZoom = 20.0f;   // Maximum zoom level
+
 
         public Vector3 offset;    // The offset distance between the player and camera
-        public float smoothSpeed = 0.225f;  // Smoothing factor to make camera movement smooth
+        public float smoothSpeed = 2.0f;  // Smoothing factor to make camera movement smooth
         public GameObject player; // Reference to the player's transform
 
 
@@ -28,14 +36,18 @@ namespace Game
 
             // Update the camera's position
             transform.position = smoothedPosition;
+
+
         }
 
 
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = new Vector3(5.0f, 0, -10);
+            cam = GetComponent<Camera>();
+            transform.position = new Vector3(5.0f, 0, -10f);
 
+ 
         }
 
         // Update is called once per frame
