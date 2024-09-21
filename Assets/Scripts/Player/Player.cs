@@ -21,6 +21,8 @@ namespace Player
         // Start is called before the first frame update
         void Start()
         {
+
+            transform.position = new Vector3(0,0,0);
             //set players Initial position
             
         }
