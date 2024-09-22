@@ -9,19 +9,42 @@ namespace Assets.Scripts.Player.States
 {
     internal class IdleState:IPlayerState
     {
+        private static IdleState _instance;
+        public static IdleState Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new IdleState();
+                }
+                return _instance;
+            }
+        }
+
+        private IdleState() { }
         public void HandleInput(Player controller)
         {
-            // Check if the player starts moving
-            if (Input.GetAxis("Horizontal") != 0)
+            bool isGrounded = controller.CheckIfGrounded();
+
+            if(isGrounded == false)
             {
-                controller.ChangeState(new WalkState());
+                controller.ChangeState(JumpState.Instance);
             }
+            // Check if the player is moving and not jumping 
+            else if (Input.GetAxis("Horizontal") != 0 && isGrounded)
+            {
+                controller.ChangeState(WalkState.Instance);
+            }
+
         }
 
         public void UpdateState(Player controller)
         {
             // Set the idle animation in the Animator
-            controller.animator.SetTrigger("Idle");
+            controller.animator.SetBool("running",false);
+            controller.animator.SetBool("grounded", true);
+
         }
     }
 }

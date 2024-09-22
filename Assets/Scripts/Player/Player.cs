@@ -17,7 +17,13 @@ namespace Assets.Scripts.Player
         [SerializeField]
         private float playerScale = 0.5f;
         [SerializeField]
-        private float JumpForce = 0.5f;
+        private float jumpForce = 5.0f;
+
+        private bool grounded;
+
+        public IPlayerState idleState;
+        public IPlayerState walkState;
+        public IPlayerState jumpState;
 
         private IPlayerState currentState;
 
@@ -29,8 +35,15 @@ namespace Assets.Scripts.Player
             animator = GetComponent<Animator>();
 
 
-            //setting the initial animation state to idle
-            currentState = new IdleState();
+            // Initialize and cache all states
+            idleState = IdleState.Instance;
+            walkState = WalkState.Instance;
+            jumpState = JumpState.Instance;
+
+            if(CheckIfGrounded() == true)
+                currentState = JumpState.Instance;
+            else
+                currentState = idleState;
         }
 
         // Start is called before the first frame update
@@ -45,12 +58,12 @@ namespace Assets.Scripts.Player
         // Update is called once per frame
         private void Update()
         {
-            AllowPlayerMovement(playerBody, playerSpeed);
+            AllowPlayerMovement(playerBody, playerSpeed,jumpForce);
 
         }
 
 
-        private void AllowPlayerMovement(Rigidbody2D playerBody, float playerSpeed)
+        private void AllowPlayerMovement(Rigidbody2D playerBody, float playerSpeed,float jumpForce)
         {
 
             float horizontalInput = Input.GetAxis("Horizontal");
@@ -66,20 +79,55 @@ namespace Assets.Scripts.Player
             }
 
             //player jump
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.W) && grounded )
             {
-                playerBody.velocity = new Vector2(playerBody.velocity.x, playerSpeed);
+                Jump();
             }
+
+            //change the state to running
+            currentState.HandleInput(this);
+            currentState.UpdateState(this);
+
+            //animator.SetBool("running", horizontalInput != 0);
+            //animator.SetBool("grounded", grounded);
+            
+
+
         }
+
+
+
 
         /**
          * Changes the  state of player
+         * e.g. from running to jumping 
          */
         public void ChangeState(IPlayerState newState)
         {
             currentState = newState;
         }
 
+
+        private void Jump()
+        {
+            playerBody.velocity = new Vector2(playerBody.velocity.x, jumpForce);
+            grounded = false;
+            //animator
+
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if(collision.gameObject.tag == "ground")
+            {
+                grounded = true;
+            }
+        }
+
+        public bool CheckIfGrounded()
+        {
+            return grounded == true;
+        }
 
 
 

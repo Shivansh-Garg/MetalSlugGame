@@ -5,37 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+
 namespace Assets.Scripts.Player.States
 {
-    internal class WalkState:IPlayerState
+    internal class JumpState:IPlayerState
     {
-        private static WalkState _instance;
-        public static WalkState Instance
+        private static JumpState _instance;
+        public static JumpState Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new WalkState();
+                    _instance = new JumpState();
                 }
                 return _instance;
             }
         }
 
-        private WalkState() { }
+        private JumpState() { }
 
         public void HandleInput(Player controller)
         {
             // Handle transition from walk to idle
-            bool isGrounded = controller.CheckIfGrounded();
-
 
             //******this is not required the control is automatically  coming back to idle state
-            if (controller.CheckIfGrounded() == false)
-            {
-                controller.ChangeState(JumpState.Instance);
-            }
-            else if (Input.GetAxis("Horizontal") == 0 && isGrounded)
+            if (controller.CheckIfGrounded() == true)
             {
                 controller.ChangeState(IdleState.Instance);
             }
@@ -51,8 +46,8 @@ namespace Assets.Scripts.Player.States
         {
 
             // Set walking animation in the Animator
-            controller.animator.SetBool("running",true);
-            controller.animator.SetBool("grounded",true);
+            controller.animator.SetBool("running", false);
+            controller.animator.SetBool("grounded", false);
         }
     }
 }
