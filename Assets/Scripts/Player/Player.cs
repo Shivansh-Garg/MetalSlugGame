@@ -116,6 +116,24 @@ namespace Assets.Scripts.Player
 
         }
 
+        private void attack()
+        {
+
+        }
+
+        private void ThrowWeapon()
+        {
+            //check if weapon is equiped
+
+
+            //max 3 tries
+
+
+            //game will spawn kunai at random pos
+
+        }
+
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if(collision.gameObject.tag == "ground")
@@ -129,6 +147,8 @@ namespace Assets.Scripts.Player
             return grounded == true;
         }
 
+
+        
 
 
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game
@@ -45,7 +46,7 @@ namespace Game
         void Start()
         {
             cam = GetComponent<Camera>();
-            transform.position = new Vector3(5.0f, 0, -10f);
+            transform.position = new Vector3(17.3f, 0.76f, -10f);
 
  
         }
