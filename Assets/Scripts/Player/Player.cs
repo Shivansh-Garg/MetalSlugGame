@@ -79,7 +79,7 @@ namespace Assets.Scripts.Player
             }
 
             //player jump
-            if (Input.GetKey(KeyCode.W) && grounded )
+            if (Input.GetKey(KeyCode.UpArrow) && grounded )
             {
                 Jump();
             }

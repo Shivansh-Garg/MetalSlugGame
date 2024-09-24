@@ -23,7 +23,7 @@ namespace Game {
         {
             if (DetectObject())
             {
-                Debug.Log
+                //Debug.Log
                 if (InteractInput())
                 {
                     Debug.Log("Detected");
