@@ -14,12 +14,18 @@ namespace Assets.Scripts.Player
         public float currentHealth;
         public Slider healthBar;  // Reference to the UI Slider
 
+        private bool _dead;
+
+        Animator anim;
+
         void Start()
         {
             // Initialize the player's health and the health bar's max value
             currentHealth = maxHealth;
             healthBar.maxValue = maxHealth;
             healthBar.value = maxHealth;
+
+            anim = GetComponent<Animator>();
         }
 
         // Call this method to apply damage to the player
@@ -27,7 +33,11 @@ namespace Assets.Scripts.Player
         {
             currentHealth -= damage;
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth); // Ensures health never goes below 0
-
+            if (currentHealth > 0)
+            {
+                anim.SetTrigger("takingDamage");
+            }
+   
             UpdateHealthBar();
         }
 
@@ -43,6 +53,13 @@ namespace Assets.Scripts.Player
         // Update the health bar to reflect the current health
         void UpdateHealthBar()
         {
+
+            if(healthBar.value == 0)
+            {
+                anim.SetTrigger("died");
+
+                GetComponent<Player>().enabled = false;
+            }
             healthBar.value = currentHealth;
         }
     }
