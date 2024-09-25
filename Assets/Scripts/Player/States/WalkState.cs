@@ -24,18 +24,28 @@ namespace Assets.Scripts.Player.States
 
         private WalkState() { }
 
-        public void HandleInput(Player controller)
+        public void HandleInput(Player controller,AnimatorStateInfo prevState)
         {
             // Handle transition from walk to idle
             bool isGrounded = controller.CheckIfGrounded();
+            bool MeeleKeyPressed = controller.checkIfAttacking();
+            bool throwKeyPressed = controller.checkIfKunaiAttacking();
 
 
             //******this is not required the control is automatically  coming back to idle state
-            if (controller.CheckIfGrounded() == false)
+            if (isGrounded == false)
             {
                 controller.ChangeState(JumpState.Instance);
             }
-            else if (Input.GetAxis("Horizontal") == 0 && isGrounded)
+            else if (MeeleKeyPressed && isGrounded)
+            {
+                controller.ChangeState(AttackState.Instance);
+            }
+            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded)
+            {
+                controller.ChangeState(ThrowState.Instance);
+            }
+            else if (Input.GetAxis("Horizontal") == 0 && isGrounded && !MeeleKeyPressed && !throwKeyPressed)
             {
                 controller.ChangeState(IdleState.Instance);
             }

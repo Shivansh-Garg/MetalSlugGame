@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Player.States;
+using System.Windows.Input;
+using Assets.Scripts.Weapon;
+using Assets.Scripts.Player.Actions;
 
 namespace Assets.Scripts.Player
 {
@@ -10,8 +13,25 @@ namespace Assets.Scripts.Player
     {
 
         public Animator animator;
-        private Rigidbody2D playerBody;
 
+
+        //references to script
+        private KunaiAttack ThrowKunai;
+        private PlayerHealth playerHealth;
+
+
+        //references to gameObjects
+        public GameObject sword;
+
+        
+        
+        private Rigidbody2D playerBody;
+        private BoxCollider2D swordCollider;
+        private BoxCollider2D boxCollider;
+
+
+        [SerializeField]
+        private LayerMask groundLayer;
         [SerializeField]
         public float playerSpeed = 7.0f;
         [SerializeField]
@@ -19,26 +39,57 @@ namespace Assets.Scripts.Player
         [SerializeField]
         private float jumpForce = 5.0f;
 
-        private bool grounded;
+        //private bool grounded;
+        private bool isMeeleAttacking;
+        private bool isKunaiAttacking;
 
         public IPlayerState idleState;
         public IPlayerState walkState;
         public IPlayerState jumpState;
-
+        public IPlayerState jumpAttackState;
+        public IPlayerState throwState;
+        public IPlayerState attackState;
         private IPlayerState currentState;
 
 
         //method to find the player body in the //awake method is called whenever the game is instantiated
         private void Awake()
         {
+            
             playerBody = GetComponent<Rigidbody2D>(); // will store the player object as its the closest rigid body
             animator = GetComponent<Animator>();
+            
+            
+            //initializing all the colliders
+            boxCollider = GetComponent<BoxCollider2D>();
+            if (sword != null) { swordCollider = sword.GetComponent<BoxCollider2D>(); }
+
+            //initializing mono behaviour scripts
+            ThrowKunai = GetComponentInChildren<KunaiAttack>(); // in C# cannot instanitiate script with Mono Behaviour using the new keyword
+            playerHealth = GetComponent<PlayerHealth>();
+
+            if (ThrowKunai == null)
+            {
+                Debug.LogError("KunaiScript not found on the player or its children!");
+            }
+
+            //swordCommand = new SwordAttack(sword);
+            //kunaiCommand = new KunaiAttack(kunai);
+
+            if (swordCollider != null)
+            {
+                Debug.Log("Sword BoxCollider found: " + swordCollider);
+                swordCollider.enabled = false;
+            }
 
 
             // Initialize and cache all states
             idleState = IdleState.Instance;
             walkState = WalkState.Instance;
             jumpState = JumpState.Instance;
+            attackState = AttackState.Instance;
+            jumpAttackState = JumpAttackState.Instance;
+            throwState = ThrowState.Instance;
 
             if(CheckIfGrounded() == true)
                 currentState = JumpState.Instance;
@@ -59,6 +110,12 @@ namespace Assets.Scripts.Player
         private void Update()
         {
             AllowPlayerMovement(playerBody, playerSpeed,jumpForce);
+            AllowPlayerAttack();
+
+
+            //change the state of player
+            currentState.HandleInput(this);
+            currentState.UpdateState(this);
 
         }
 
@@ -71,7 +128,7 @@ namespace Assets.Scripts.Player
 
             if (horizontalInput > 0.01f) //the player is moving right
             {
-                transform.localScale = Vector3.one*playerScale;
+                transform.localScale = new Vector3(1,1,1)*playerScale;
             }
             else if(horizontalInput< -0.01f)//the player is moving left
             {
@@ -79,20 +136,125 @@ namespace Assets.Scripts.Player
             }
 
             //player jump
-            if (Input.GetKey(KeyCode.W) && grounded )
+            if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && CheckIfGrounded() )
             {
                 Jump();
             }
 
-            //change the state to running
-            currentState.HandleInput(this);
-            currentState.UpdateState(this);
 
             //animator.SetBool("running", horizontalInput != 0);
             //animator.SetBool("grounded", grounded);
+
+        }
+        private void AllowPlayerAttack()
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                Melee();
+
+                isMeeleAttacking = true;
+
+            }
+            else if(Input.GetKeyUp(KeyCode.F))
+            {
+                isMeeleAttacking= false;
+                if (swordCollider != null)
+                {
+                    // Disable the collider when 'E' is released
+                    swordCollider.enabled = false;
+                }
+            }
+            else
+            {
+                isMeeleAttacking = false;
+            }
+
+            //do  for throw attacks
+            //creating the laser instance (shooting lasers)
+            if (Input.GetKey(KeyCode.Q))
+            {
+                RangedAttack();
+                isKunaiAttacking = true;
+            }
+            else if(Input.GetKeyUp(KeyCode.Q)){
+                isKunaiAttacking = false;
+            }
+            else
+            {
+                isKunaiAttacking = false;
+            }
+
+        }
+
+        private void Jump()
+        {
+            playerBody.velocity = new Vector2(playerBody.velocity.x, jumpForce);
+            //animator
+
+        }
+
+        private void Melee()
+        {
+            //activating the sword collider
+            if (swordCollider != null)
+            {
+                swordCollider.enabled = true;
+            }
             
 
+            //do damage to enemies if they collide with the sword collider
+            //this will probably go inside the enemy script
+        }
 
+
+        private void PlayerHealth()
+        {
+
+        }
+
+        private void TakeDamage()
+        {
+            
+
+        }
+
+        private void RangedAttack()
+        {
+
+
+            //check if weapon is equiped
+
+
+            //max 3 ammo
+            ThrowKunai.SpawnKunai();
+
+
+            //game will spawn kunai at random pos
+
+        }
+
+
+        // Detect collision with damaging objects
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("Enemy")) // Assuming the enemy has a tag "Enemy"
+            {
+                //TakeDamage(10f); // Apply damage when colliding with an enemy
+            }
+        }
+
+        public bool CheckIfGrounded()
+        {
+            RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f,groundLayer);
+            return raycastHit.collider != null;
+        }
+        public bool checkIfAttacking()
+        {
+            return isMeeleAttacking;
+        }
+        public bool checkIfKunaiAttacking()
+        {
+            return isKunaiAttacking;
         }
 
 
@@ -107,49 +269,7 @@ namespace Assets.Scripts.Player
             currentState = newState;
         }
 
-
-        private void Jump()
-        {
-            playerBody.velocity = new Vector2(playerBody.velocity.x, jumpForce);
-            grounded = false;
-            //animator
-
-        }
-
-        private void attack()
-        {
-
-        }
-
-        private void ThrowWeapon()
-        {
-            //check if weapon is equiped
-
-
-            //max 3 tries
-
-
-            //game will spawn kunai at random pos
-
-        }
-
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            if(collision.gameObject.tag == "ground")
-            {
-                grounded = true;
-            }
-        }
-
-        public bool CheckIfGrounded()
-        {
-            return grounded == true;
-        }
-
-
-        
-
+      
 
     }
 

@@ -7,16 +7,19 @@ TagManager:
   - ground
   - background
   - Environment
+  - Inventory
+  - Enemy
+  - PlayerWeapon
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Item
-  - 
-  - 
+  - Ground
+  - kunai
   - 
   - 
   - 
@@ -52,4 +55,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1707394173
+    locked: 0
+  - name: UI
+    uniqueID: 292226849
     locked: 0
