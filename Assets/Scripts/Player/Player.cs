@@ -137,7 +137,9 @@ namespace Assets.Scripts.Player
             }
 
             //player jump
+
             if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && CheckIfGrounded() )
+
             {
                 Jump();
             }
