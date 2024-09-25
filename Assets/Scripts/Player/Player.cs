@@ -42,6 +42,7 @@ namespace Assets.Scripts.Player
         //private bool grounded;
         private bool isMeeleAttacking;
         private bool isKunaiAttacking;
+        private bool isTakingDamage;
 
         public IPlayerState idleState;
         public IPlayerState walkState;
@@ -235,13 +236,59 @@ namespace Assets.Scripts.Player
 
 
         // Detect collision with damaging objects
-        void OnCollisionEnter2D(Collision2D collision)
+        void OnTriggerEnter2D(Collider2D other)
         {
-            if (collision.gameObject.CompareTag("Enemy")) // Assuming the enemy has a tag "Enemy"
+            Debug.Log("sadasdspikes");
+
+            currentState.HandleInput(this);
+            currentState.UpdateState(this);
+
+        }
+
+        void OnTriggerStay2D(Collider2D other)
+        {
+            if (other.CompareTag("spikes"))
             {
-                //TakeDamage(10f); // Apply damage when colliding with an enemy
+                if (!isTakingDamage)
+                {
+                    // Start taking damage
+                    isTakingDamage = true;
+                    StartCoroutine(TakeDamageOverTime());
+                }
+            }
+
+            currentState.HandleInput(this);
+            currentState.UpdateState(this);
+        }
+
+        void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.CompareTag("spikes"))
+            {
+                // Stop taking damage when leaving the spikes
+                isTakingDamage = false;
+                StopCoroutine(TakeDamageOverTime());
+            }
+
+            currentState.HandleInput(this);
+            currentState.UpdateState(this);
+        }
+
+        //co routine for taking damage
+        IEnumerator TakeDamageOverTime()
+        {
+            while (isTakingDamage)
+            {
+                playerHealth.TakeDamage(10.0f);
+                Debug.Log("Taking damage from spikes");
+
+                // Wait for a specific interval before taking damage again
+                yield return new WaitForSeconds(1.0f); // Change 1.0f to adjust the damage frequency
             }
         }
+
+
+
 
         public bool CheckIfGrounded()
         {
@@ -255,6 +302,11 @@ namespace Assets.Scripts.Player
         public bool checkIfKunaiAttacking()
         {
             return isKunaiAttacking;
+        }
+
+        public bool checkIfTakingDamage()
+        {
+            return isTakingDamage;
         }
 
 
