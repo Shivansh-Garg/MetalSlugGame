@@ -23,16 +23,27 @@ namespace Assets.Scripts.Player.States
         }
 
         private IdleState() { }
-        public void HandleInput(Player controller)
+        public void HandleInput(Player controller, AnimatorStateInfo prevState)
         {
             bool isGrounded = controller.CheckIfGrounded();
+            bool MeeleKeyPressed = controller.checkIfAttacking();
+            bool throwKeyPressed = controller.checkIfKunaiAttacking();
 
-            if(isGrounded == false)
+
+            if (isGrounded == false)
             {
                 controller.ChangeState(JumpState.Instance);
             }
+            else if(Input.GetKeyDown(KeyCode.F) && isGrounded)
+            {
+                controller.ChangeState(AttackState.Instance);
+            }
+            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded)
+            {
+                controller.ChangeState(ThrowState.Instance);
+            }
             // Check if the player is moving and not jumping 
-            else if (Input.GetAxis("Horizontal") != 0 && isGrounded)
+            else if (Input.GetAxis("Horizontal") != 0 && isGrounded && !(Input.GetKeyDown(KeyCode.F)) &&!throwKeyPressed)
             {
                 controller.ChangeState(WalkState.Instance);
             }

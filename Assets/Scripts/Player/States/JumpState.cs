@@ -25,12 +25,24 @@ namespace Assets.Scripts.Player.States
 
         private JumpState() { }
 
-        public void HandleInput(Player controller)
+        public void HandleInput(Player controller, AnimatorStateInfo prevState)
         {
-            // Handle transition from walk to idle
+            AnimatorStateInfo currentState = controller.animator.GetCurrentAnimatorStateInfo(0);
 
-            //******this is not required the control is automatically  coming back to idle state
-            if (controller.CheckIfGrounded() == true)
+
+            bool isGrounded = controller.CheckIfGrounded();
+            bool MeeleKeyPressed = controller.checkIfAttacking();
+            bool throwKeyPressed = controller.checkIfKunaiAttacking();
+
+            if (MeeleKeyPressed && !isGrounded)
+            {
+                controller.ChangeState(JumpAttackState.Instance);
+            }
+            else if(throwKeyPressed && !isGrounded && !MeeleKeyPressed)
+            {
+                controller.ChangeState(ThrowState.Instance);
+            }
+            else if(controller.CheckIfGrounded() == true && !MeeleKeyPressed &&!throwKeyPressed)
             {
                 controller.ChangeState(IdleState.Instance);
             }
