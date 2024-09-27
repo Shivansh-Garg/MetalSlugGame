@@ -249,7 +249,7 @@ namespace Assets.Scripts.Player
         // Detect collision with damaging objects
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("EnemyProjectiles") || other.CompareTag("enemySword"))
+            if (other.CompareTag("EnemyProjectiles"))
             {
                 isTakingDamage = true;
                 playerHealth.TakeDamage(10.0f);
@@ -267,7 +267,7 @@ namespace Assets.Scripts.Player
 
         void OnTriggerStay2D(Collider2D other)
         {
-            if (other.CompareTag("spikes") || other.CompareTag("enemySword"))
+            if (other.CompareTag("spikes"))
             {
                 if ( !isTakingTrapDamage)
                 {
@@ -286,7 +286,7 @@ namespace Assets.Scripts.Player
 
         void OnTriggerExit2D(Collider2D other)
         {
-            if (other.CompareTag("spikes"))
+            if (other.CompareTag("spikes") )
             {
                 // Stop taking damage when leaving the spikes
                 isTakingDamage = false;

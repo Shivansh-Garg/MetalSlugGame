@@ -1,6 +1,8 @@
 using Assets.Scripts.Enemy;
+using Assets.Scripts.Player;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 namespace Assets.Scripts.Enemy
@@ -17,9 +19,11 @@ namespace Assets.Scripts.Enemy
         private BoxCollider2D enemySwordCollider;
         [SerializeField] private GameObject enemySword;
 
+
         //Making references
         private Animator anime;
         private EnemyPatrolling enemyPatrolling;
+        private PlayerHealth playerHealth;
 
 
         private EnemyHealth health;
@@ -32,7 +36,6 @@ namespace Assets.Scripts.Enemy
             enemyPatrolling = GetComponentInParent<EnemyPatrolling>();
 
             health = GetComponent<EnemyHealth>();
-            health = GetComponent<EnemyHealth>();
             if (health != null)
             {
                 health.SetHealth(100.0f);
@@ -40,14 +43,6 @@ namespace Assets.Scripts.Enemy
             else
             {
                 Debug.Log("Health no found in enemy");
-            }
-            if (enemySword != null)
-            {
-                enemySwordCollider = enemySword.GetComponent<BoxCollider2D>();
-            }
-            if (enemySwordCollider != null)
-            {
-                enemySwordCollider.enabled = false;
             }
         }
 
@@ -67,9 +62,6 @@ namespace Assets.Scripts.Enemy
             {
                 if (currentTime >= attackCoolDownTimer)
                 {
-                    currentTime = 0; // attack performed
-                    attackCoolDownTimer = currentTime;
-                    anime.SetTrigger("meleeAttack");
                     PlayerDamaged(); // Apply damage to the player
                 }
 
@@ -89,7 +81,16 @@ namespace Assets.Scripts.Enemy
 
             if (hit.collider != null)
             {
-                // playerHealth = hit.transform.GetComponent<Health>();
+                // Check if playerHealth is already set, if not, initialize it
+                if (playerHealth == null)
+                {
+                    playerHealth = hit.transform.GetComponent<PlayerHealth>();
+
+                    if (playerHealth == null)
+                    {
+                        Debug.LogError("PlayerHealth component not found on the player!");
+                    }
+                }
             }
 
             return hit.collider != null;
@@ -104,18 +105,23 @@ namespace Assets.Scripts.Enemy
 
         private void PlayerDamaged()
         {
+            currentTime = 0; // attack performed
+            anime.SetTrigger("meleeAttack");
 
+            if (CanSeePlayer() && playerHealth != null)
+            {
+                // Apply damage only if the player is still in range
+                playerHealth.TakeDamage(attackPower);
+            }
         }
         public void HandleDeadCondition()
         {
             gameObject.SetActive(false);
         }
-
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("PlayerWeapon"))
             {
-                Debug.Log("taking damage from enemy");
                 Destroy(other);
                 anime.SetTrigger("hurt");
                 Debug.Log("isTakingDamage from proj");
@@ -125,14 +131,14 @@ namespace Assets.Scripts.Enemy
                     anime.SetTrigger("died");
 
 
-                    //Destroy(gameObject);
+
                     _isDead = true;
+                    //Destroy(gameObject);
                 }
 
             }
             else if (other.CompareTag("PlayerMeeleWeapon"))
             {
-
                 Debug.Log("isTakingDamage from proj");
                 health.TakeDamage(20.0f);
                 if (health.GeCurrentHealth() == 0)
