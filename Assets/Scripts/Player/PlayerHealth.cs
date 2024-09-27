@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Player.States;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Assets.Scripts.Player
 
         private bool _dead;
 
+ 
         Animator anim;
 
         void Start()
@@ -35,10 +37,10 @@ namespace Assets.Scripts.Player
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth); // Ensures health never goes below 0
             if (currentHealth > 0)
             {
-                anim.SetTrigger("takingDamage");
             }
-   
+
             UpdateHealthBar();
+   
         }
 
         // Call this method to heal the player
@@ -50,16 +52,14 @@ namespace Assets.Scripts.Player
             UpdateHealthBar();
         }
 
+
+
+
         // Update the health bar to reflect the current health
         void UpdateHealthBar()
         {
 
-            if(healthBar.value == 0)
-            {
-                anim.SetTrigger("died");
 
-                GetComponent<Player>().enabled = false;
-            }
             healthBar.value = currentHealth;
         }
     }

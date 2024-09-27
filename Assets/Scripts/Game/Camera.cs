@@ -16,29 +16,65 @@ namespace Game
         public float minZoom = 5.0f;    // Minimum zoom level
         public float maxZoom = 20.0f;   // Maximum zoom level
 
+        // Camera boundary values (change these according to your game world)
+        public float minX = 3f;  // Minimum X clamp value
+        public float maxX = 220f;   // Maximum X clamp value
+        public float minY = -7f;   // Minimum Y clamp value
+        public float maxY = 6.77f;    // Maximum Y clamp value
 
         public Vector3 offset;    // The offset distance between the player and camera
-        public float smoothSpeed = 2.0f;  // Smoothing factor to make camera movement smooth
+        public float smoothSpeed = 0.225f;  // Smoothing factor to make camera movement smooth
         public GameObject player; // Reference to the player's transform
 
 
         void LateUpdate()
         {
-            player = GameObject.Find("Player");
+            // Ensure player reference is assigned only once instead of every frame
+            if (player == null)
+            {
+                player = GameObject.Find("Player");
+            }
+
+            float offsetXPos = 5.0f;
+            float offsetYPos = 2.0f;
+
+            
+
+            // Flip the offset based on player's local scale
+            if (player.transform.localScale.x < 0)
+            {
+                offsetXPos = -Mathf.Abs(offsetXPos);
+            }
 
             float playerXPos = player.transform.position.x;
-            float offsetXPos = 5.0f;
+            float playerYPos = player.transform.position.y;
 
-            // Target position the camera should move towards (player's position + offset)
-            Vector3 desiredPosition = new Vector3(playerXPos + offsetXPos, transform.position.y, transform.position.z); 
+            if (playerXPos < 7.0f)
+            {
+                playerXPos = 7.0f;
+            }
 
-            // Smoothly move the camera towards the desired position
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+            if(playerYPos<-5.0f)
+            {
+                playerYPos = -5.0f;
+            }
+            else if (playerYPos > 0f)
+            {
+                playerYPos = 0;
+            }
+            
+            
+            // Target position for the camera (player's position + adjusted offset)
+            Vector3 desiredPosition = new Vector3(playerXPos + offsetXPos, playerYPos + offsetYPos, transform.position.z);
+            float clampedX = Mathf.Clamp(desiredPosition.x, minX, maxX);
+            float clampedY = Mathf.Clamp(desiredPosition.y, minY, maxY);
 
-            // Update the camera's position
+            // Smoothly interpolate the camera's position towards the desired position
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime * 1f);
+
+
             transform.position = smoothedPosition;
-
-
+            //transform.position = new Vector3(clampedX, clampedY, smoothedPosition.z);
         }
 
 

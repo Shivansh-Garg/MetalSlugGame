@@ -11,6 +11,10 @@ TagManager:
   - Enemy
   - PlayerWeapon
   - spikes
+  - Undefined
+  - EnemyProjectiles
+  - PlayerMeeleWeapon
+  - lvl2
   layers:
   - Default
   - TransparentFX

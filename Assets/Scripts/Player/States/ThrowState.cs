@@ -27,16 +27,26 @@ namespace Assets.Scripts.Player.States
 
         public void HandleInput(Player controller, AnimatorStateInfo prevState)
         {
+            bool isPlayerDead = controller.checkIfPlayerDead();
+            bool isTakingDamage = controller.checkIfTakingDamage();
             bool isAttacking = controller.checkIfAttacking();
-            // Handle transition from walk to idle
             bool isGrounded = controller.CheckIfGrounded();
             bool isThrowing = controller.checkIfKunaiAttacking();
 
-            if (!isThrowing && isGrounded)
+            if (isPlayerDead)
+            {
+                controller.ChangeState(DeadState.Instance);
+            }
+            else if (isTakingDamage && !isPlayerDead)
+            {
+                controller.ChangeState(TakingDamageState.Instance);
+            }
+
+            else if (!isThrowing && isGrounded && !isTakingDamage && !isPlayerDead )
             {
                 controller.ChangeState(IdleState.Instance);
             }
-            else if (!isAttacking && !isGrounded)
+            else if (!isAttacking && !isGrounded && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(JumpState.Instance);
             }

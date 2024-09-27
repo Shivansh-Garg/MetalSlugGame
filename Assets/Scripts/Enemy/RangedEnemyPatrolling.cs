@@ -22,40 +22,46 @@ public class RangedEnemyPatrolling : MonoBehaviour
 
     private void Update()
     {
-        if (inLeftDirection)
+        if(enemy != null)
         {
-            if (enemy.position.x >= leftEndpoint.position.x)
+            if (inLeftDirection)
             {
-                EnemyMove(-1);
+                if (enemy.position.x >= leftEndpoint.position.x)
+                {
+                    EnemyMove(-1);
+                }
+                else
+                {
+                    changeDirection();
+                }
             }
             else
             {
-                changeDirection();
+                if (enemy.position.x <= rightEndpoint.position.x)
+                {
+                    EnemyMove(1);
+                }
+                else
+                {
+                    changeDirection();
+                }
+
             }
         }
-        else
-        {
-            if (enemy.position.x <= rightEndpoint.position.x)
-            {
-                EnemyMove(1);
-            }
-            else
-            {
-                changeDirection();
-            }
-
-        }
-
     }
 
     private void EnemyMove(int inDirection)
     {
-        anime.SetBool("isMoving", true);
-        enemy.localScale = new Vector3(Mathf.Abs(inintialScale.x) * inDirection, inintialScale.y, inintialScale.z);
+        if(enemy != null)
+        {
+            anime.SetBool("isMoving", true);
 
-        // will make the enemy move
-        enemy.position = new Vector3(enemy.position.x + Time.deltaTime * inDirection * movementSpeed,
-            enemy.position.y, enemy.position.z);
+            enemy.localScale = new Vector3(Mathf.Abs(inintialScale.x) * inDirection, inintialScale.y, inintialScale.z);
+
+            // will make the enemy move
+            enemy.position = new Vector3(enemy.position.x + Time.deltaTime * inDirection * movementSpeed,
+                enemy.position.y, enemy.position.z);
+        }
     }
 
     private void changeDirection()

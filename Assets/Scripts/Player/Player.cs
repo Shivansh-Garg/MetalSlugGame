@@ -5,6 +5,7 @@ using Assets.Scripts.Player.States;
 using System.Windows.Input;
 using Assets.Scripts.Weapon;
 using Assets.Scripts.Player.Actions;
+using Assets.Scripts.Game;
 
 namespace Assets.Scripts.Player
 {
@@ -13,6 +14,7 @@ namespace Assets.Scripts.Player
     {
 
         public Animator animator;
+        MySceneManager sceneManager;
 
 
         //references to script
@@ -22,7 +24,6 @@ namespace Assets.Scripts.Player
 
         //references to gameObjects
         public GameObject sword;
-
         
         
         private Rigidbody2D playerBody;
@@ -35,7 +36,7 @@ namespace Assets.Scripts.Player
         [SerializeField]
         public float playerSpeed = 7.0f;
         [SerializeField]
-        private float playerScale = 0.5f;
+        private float playerScale = 0.4f;
         [SerializeField]
         private float jumpForce = 5.0f;
 
@@ -43,14 +44,18 @@ namespace Assets.Scripts.Player
         private bool isMeeleAttacking;
         private bool isKunaiAttacking;
         private bool isTakingDamage;
+        private bool isTakingTrapDamage = false;
+        private bool isPlayerDead = false;
 
         public IPlayerState idleState;
         public IPlayerState walkState;
         public IPlayerState jumpState;
         public IPlayerState jumpAttackState;
         public IPlayerState throwState;
+        public IPlayerState deadState;
+        public IPlayerState takingDamageState;
         public IPlayerState attackState;
-        private IPlayerState currentState;
+        public IPlayerState currentState;
 
 
         //method to find the player body in the //awake method is called whenever the game is instantiated
@@ -91,6 +96,12 @@ namespace Assets.Scripts.Player
             attackState = AttackState.Instance;
             jumpAttackState = JumpAttackState.Instance;
             throwState = ThrowState.Instance;
+            deadState = DeadState.Instance; 
+            takingDamageState= TakingDamageState.Instance;
+
+
+            //creating an instance of scene manager
+            sceneManager = MySceneManager.Instance;
 
             if(CheckIfGrounded() == true)
                 currentState = JumpState.Instance;
@@ -113,10 +124,36 @@ namespace Assets.Scripts.Player
             AllowPlayerMovement(playerBody, playerSpeed,jumpForce);
             AllowPlayerAttack();
 
-
+            CheckPlayerStatus();
             //change the state of player
             currentState.HandleInput(this);
             currentState.UpdateState(this);
+
+
+        }
+
+        private void CheckPlayerStatus()
+        {
+            //means the player is dead
+            if(playerHealth.currentHealth <= 0 && !isPlayerDead)
+            {
+                isPlayerDead = true;
+                isTakingDamage = false;
+                currentState.HandleInput(this);
+                currentState.UpdateState(this);
+                //Destroy(gameObject);
+            }
+            isTakingDamage = false;
+        }
+
+
+        private void HandlePlayerDeathRoutine()
+        {
+            // Destroy the player GameObject
+            Destroy(gameObject);
+            sceneManager.OpenMenuScene();
+                
+            //proceed to menu scene
 
         }
 
@@ -190,8 +227,6 @@ namespace Assets.Scripts.Player
         private void Jump()
         {
             playerBody.velocity = new Vector2(playerBody.velocity.x, jumpForce);
-            //animator
-
         }
 
         private void Melee()
@@ -202,35 +237,12 @@ namespace Assets.Scripts.Player
                 swordCollider.enabled = true;
             }
             
-
-            //do damage to enemies if they collide with the sword collider
-            //this will probably go inside the enemy script
-        }
-
-
-        private void PlayerHealth()
-        {
-
-        }
-
-        private void TakeDamage()
-        {
-            
-
         }
 
         private void RangedAttack()
         {
-
-
-            //check if weapon is equiped
-
-
             //max 3 ammo
             ThrowKunai.SpawnKunai();
-
-
-            //game will spawn kunai at random pos
 
         }
 
@@ -238,7 +250,16 @@ namespace Assets.Scripts.Player
         // Detect collision with damaging objects
         void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("sadasdspikes");
+            if (other.CompareTag("EnemyProjectiles"))
+            {
+                isTakingDamage = true;
+                playerHealth.TakeDamage(10.0f);
+
+            }
+            if (other.CompareTag("lvl2"))
+            {
+                sceneManager.OpenGameScene("Scene_2");
+            }
 
             currentState.HandleInput(this);
             currentState.UpdateState(this);
@@ -249,13 +270,16 @@ namespace Assets.Scripts.Player
         {
             if (other.CompareTag("spikes"))
             {
-                if (!isTakingDamage)
+                if ( !isTakingTrapDamage)
                 {
                     // Start taking damage
                     isTakingDamage = true;
+                    isTakingTrapDamage = true;
                     StartCoroutine(TakeDamageOverTime());
                 }
+
             }
+
 
             currentState.HandleInput(this);
             currentState.UpdateState(this);
@@ -267,6 +291,7 @@ namespace Assets.Scripts.Player
             {
                 // Stop taking damage when leaving the spikes
                 isTakingDamage = false;
+                isTakingTrapDamage = false;
                 StopCoroutine(TakeDamageOverTime());
             }
 
@@ -277,10 +302,9 @@ namespace Assets.Scripts.Player
         //co routine for taking damage
         IEnumerator TakeDamageOverTime()
         {
-            while (isTakingDamage)
+            while (isTakingTrapDamage)
             {
                 playerHealth.TakeDamage(10.0f);
-                Debug.Log("Taking damage from spikes");
 
                 // Wait for a specific interval before taking damage again
                 yield return new WaitForSeconds(1.0f); // Change 1.0f to adjust the damage frequency
@@ -290,6 +314,8 @@ namespace Assets.Scripts.Player
 
 
 
+
+         
         public bool CheckIfGrounded()
         {
             RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f,groundLayer);
@@ -309,7 +335,10 @@ namespace Assets.Scripts.Player
             return isTakingDamage;
         }
 
-
+        public bool checkIfPlayerDead()
+        {
+            return isPlayerDead;
+        }
 
 
         /**

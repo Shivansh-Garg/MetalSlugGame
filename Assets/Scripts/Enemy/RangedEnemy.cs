@@ -1,6 +1,11 @@
+using Assets.Scripts.Enemy;
+using Assets.Scripts.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+namespace Assets.Scripts.Enemy
+{
 
 public class RangedEnemy : MonoBehaviour
 {
@@ -14,13 +19,23 @@ public class RangedEnemy : MonoBehaviour
     [SerializeField] private BoxCollider2D boxCollider2D;
     private float currentTime = Mathf.Infinity;
 
+
     private Animator anime;
     private EnemyPatrolling enemyPatrolling;
 
+    private EnemyHealth health;
+
+    private bool _isDead = false;
     private void Awake()
     {
         anime = GetComponent<Animator>();
         enemyPatrolling = GetComponentInParent<EnemyPatrolling>();
+        health = GetComponent<EnemyHealth>();
+        if(health!= null)
+        {
+            health.SetHealth(100.0f);
+        }
+
     }
 
     void Update()
@@ -38,6 +53,7 @@ public class RangedEnemy : MonoBehaviour
 
         if (enemyPatrolling != null)
         {
+
             enemyPatrolling.enabled = !CanSeePlayer(); // Patrol if the player can't be seen
         }
     }
@@ -72,4 +88,50 @@ public class RangedEnemy : MonoBehaviour
         // Set the direction for the fireball (based on enemy's facing direction)
         newFireball.GetComponent<Projectile>().setDirection(Mathf.Sign(transform.localScale.x));
     }
+
+
+
+    //taking damage from player attacks
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("PlayerWeapon"))
+        {
+            Destroy(other);
+            anime.SetTrigger("hurt");   
+            Debug.Log("isTakingDamage from proj");
+            health.TakeDamage(20.0f);
+            if (health.GeCurrentHealth() == 0)
+            {
+                anime.SetTrigger("died");
+
+                
+                Destroy(gameObject);
+                 _isDead = true;
+            }
+
+        }
+        else if (other.CompareTag("PlayerMeeleWeapon"))
+        {
+            Debug.Log("isTakingDamage from proj");
+            health.TakeDamage(20.0f);
+            if (health.GeCurrentHealth() == 0)
+            {
+                anime.SetTrigger("died");
+
+
+                Destroy(gameObject);
+                _isDead = true;
+            }
+
+        }
+        else
+        {
+            //isTakingDamage = false;
+        }
+
+
+    }
+
+}
+
 }

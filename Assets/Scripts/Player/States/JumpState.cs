@@ -33,16 +33,29 @@ namespace Assets.Scripts.Player.States
             bool isGrounded = controller.CheckIfGrounded();
             bool MeeleKeyPressed = controller.checkIfAttacking();
             bool throwKeyPressed = controller.checkIfKunaiAttacking();
+            bool isPlayerDead = controller.checkIfPlayerDead();
+            bool isTakingDamage = controller.checkIfTakingDamage();
 
-            if (MeeleKeyPressed && !isGrounded)
+
+
+            if (isPlayerDead)
+            {
+                controller.ChangeState(DeadState.Instance);
+            }
+
+            else if (isTakingDamage && !isPlayerDead)
+            {
+                controller.ChangeState(TakingDamageState.Instance);
+            }
+            else if (MeeleKeyPressed && !isGrounded && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(JumpAttackState.Instance);
             }
-            else if(throwKeyPressed && !isGrounded && !MeeleKeyPressed)
+            else if(throwKeyPressed && !isGrounded && !MeeleKeyPressed && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(ThrowState.Instance);
             }
-            else if(controller.CheckIfGrounded() == true && !MeeleKeyPressed &&!throwKeyPressed)
+            else if(controller.CheckIfGrounded() == true && !MeeleKeyPressed && !throwKeyPressed && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(IdleState.Instance);
             }

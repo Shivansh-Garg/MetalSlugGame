@@ -22,25 +22,29 @@ public class EnemyPatrolling : MonoBehaviour
 
     private void Update()
     {
-        if (inLeftDirection) { 
-            if(enemy.position.x >= leftEndpoint.position.x)
-            {
-                EnemyMove(-1);
+        if (enemy != null)
+        {
+            if (inLeftDirection) { 
+                if(enemy.position.x >= leftEndpoint.position.x)
+                {
+                    EnemyMove(-1);
+                }
+                else
+                {
+                    changeDirection();
+                }
             }
             else
-            {
-                changeDirection();
-            }
-        }
-        else
-        {   if (enemy.position.x <= rightEndpoint.position.x) {
-                EnemyMove(1);
-            }
-            else
-            {
-                changeDirection();
-            }
+            {   
+                if (enemy.position.x <= rightEndpoint.position.x) {
+                    EnemyMove(1);
+                }
+                else
+                {
+                    changeDirection();
+                }
             
+            }
         }
         
     }

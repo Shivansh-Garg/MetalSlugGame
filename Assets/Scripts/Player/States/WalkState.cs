@@ -30,22 +30,31 @@ namespace Assets.Scripts.Player.States
             bool isGrounded = controller.CheckIfGrounded();
             bool MeeleKeyPressed = controller.checkIfAttacking();
             bool throwKeyPressed = controller.checkIfKunaiAttacking();
+            bool isPlayerDead = controller.checkIfPlayerDead();
+            bool isTakingDamage = controller.checkIfTakingDamage();
 
-
+            if (isPlayerDead)
+            {
+                controller.ChangeState(DeadState.Instance);
+            }
+            else if(isTakingDamage && !isPlayerDead && !isPlayerDead)
+            {
+                controller.ChangeState(TakingDamageState.Instance);
+            }
             //******this is not required the control is automatically  coming back to idle state
-            if (isGrounded == false)
+            if (isGrounded == false && !isTakingDamage && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(JumpState.Instance);
             }
-            else if (MeeleKeyPressed && isGrounded)
+            else if (MeeleKeyPressed && isGrounded && !isTakingDamage && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(AttackState.Instance);
             }
-            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded)
+            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded && !isTakingDamage  && !isPlayerDead)
             {
                 controller.ChangeState(ThrowState.Instance);
             }
-            else if (Input.GetAxis("Horizontal") == 0 && isGrounded && !MeeleKeyPressed && !throwKeyPressed)
+            else if (Input.GetAxis("Horizontal") == 0 && isGrounded && !MeeleKeyPressed && !throwKeyPressed && !isTakingDamage)
             {
                 controller.ChangeState(IdleState.Instance);
             }

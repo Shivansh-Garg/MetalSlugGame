@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Player;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,13 @@ namespace Assets.Scripts.Weapon
 
 
         }
-        
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+
+            Destroy(gameObject);
+        }
+
 
 
     }

@@ -28,22 +28,33 @@ namespace Assets.Scripts.Player.States
             bool isGrounded = controller.CheckIfGrounded();
             bool MeeleKeyPressed = controller.checkIfAttacking();
             bool throwKeyPressed = controller.checkIfKunaiAttacking();
+            bool isTakingDamage = controller.checkIfTakingDamage();
 
 
-            if (isGrounded == false)
+            bool isPlayerDead = controller.checkIfPlayerDead();
+            if (isPlayerDead)
+            {
+                controller.ChangeState(DeadState.Instance);
+            }
+            else if (isTakingDamage && !isPlayerDead)
+            {
+                controller.ChangeState(TakingDamageState.Instance);
+
+            }
+            if (isGrounded == false && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(JumpState.Instance);
             }
-            else if(Input.GetKeyDown(KeyCode.F) && isGrounded)
+            else if(Input.GetKeyDown(KeyCode.F) && isGrounded && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(AttackState.Instance);
             }
-            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded)
+            else if(throwKeyPressed && !MeeleKeyPressed && isGrounded && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(ThrowState.Instance);
             }
             // Check if the player is moving and not jumping 
-            else if (Input.GetAxis("Horizontal") != 0 && isGrounded && !(Input.GetKeyDown(KeyCode.F)) &&!throwKeyPressed)
+            else if (Input.GetAxis("Horizontal") != 0 && isGrounded && !(Input.GetKeyDown(KeyCode.F)) &&!throwKeyPressed && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(WalkState.Instance);
             }
