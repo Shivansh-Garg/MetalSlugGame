@@ -89,8 +89,11 @@ public class RangedEnemy : MonoBehaviour
         newFireball.GetComponent<Projectile>().setDirection(Mathf.Sign(transform.localScale.x));
     }
 
-
-
+    public void HandleDeadCondition()
+        {
+            gameObject.SetActive(false);  
+        }
+    
     //taking damage from player attacks
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -104,9 +107,10 @@ public class RangedEnemy : MonoBehaviour
             {
                 anime.SetTrigger("died");
 
-                
-                Destroy(gameObject);
-                 _isDead = true;
+
+               
+                _isDead = true;
+                //Destroy(gameObject);
             }
 
         }

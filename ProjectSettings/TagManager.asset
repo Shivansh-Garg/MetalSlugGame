@@ -15,6 +15,7 @@ TagManager:
   - EnemyProjectiles
   - PlayerMeeleWeapon
   - lvl2
+  - enemySword
   layers:
   - Default
   - TransparentFX
