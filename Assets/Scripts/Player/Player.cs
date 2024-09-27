@@ -150,7 +150,6 @@ namespace Assets.Scripts.Player
         private void HandlePlayerDeathRoutine()
         {
             // Destroy the player GameObject
-            Destroy(gameObject);
             sceneManager.OpenMenuScene();
                 
             //proceed to menu scene

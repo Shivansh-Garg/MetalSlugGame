@@ -27,7 +27,6 @@ namespace Assets.Scripts.Player.States
 
         public void HandleInput(Player controller, AnimatorStateInfo prevState)
         {
-            Debug.Log("previousstate "+ prevState.ToString());
 
         }
 
