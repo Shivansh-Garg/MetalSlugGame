@@ -149,7 +149,7 @@ namespace Assets.Scripts.Player
         private void HandlePlayerDeathRoutine()
         {
             // Destroy the player GameObject
-            MySceneManager.Instance.OpenMenuScene();
+            MySceneManager.Instance.GetCurrentScene();
 
             //proceed to menu scene
 
@@ -251,7 +251,7 @@ namespace Assets.Scripts.Player
             if (other.CompareTag("EnemyProjectiles"))
             {
                 isTakingDamage = true;
-                playerHealth.TakeDamage(10.0f);
+                playerHealth.q(10.0f);
 
             }
             if (other.CompareTag("lvl2"))
