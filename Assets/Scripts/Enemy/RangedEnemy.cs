@@ -118,7 +118,7 @@ public class RangedEnemy : MonoBehaviour
             {
                 anime.SetTrigger("died");
 
-
+                
                 Destroy(gameObject);
                 _isDead = true;
             }
