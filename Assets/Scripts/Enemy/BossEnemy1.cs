@@ -134,7 +134,7 @@ public class BossEnemy1 : MonoBehaviour
 
 
                 _isDead = true;
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
 
         }
