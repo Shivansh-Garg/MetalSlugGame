@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Player;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,12 +16,12 @@ namespace Assets.Scripts.Game
 
         public void Start()
         {
-            sceneManager = MySceneManager.Instance;
+            
         }
         public void PlayGame()
         {
             // Assuming your game scene is called "GameScene"
-            sceneManager.OpenGameScene("Scene_1");
+            MySceneManager.Instance.OpenGameScene("Scene_1");
         }
 
         // Method to open the settings menu (if you have one)

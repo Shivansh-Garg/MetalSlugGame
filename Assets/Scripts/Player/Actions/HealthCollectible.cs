@@ -14,7 +14,6 @@ namespace Assets.Scripts.Player.Actions
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-                Debug.Log("apple");
             if(collision.tag == "Player")
             {
                 collision.GetComponent<PlayerHealth>().Heal(_healthValue);

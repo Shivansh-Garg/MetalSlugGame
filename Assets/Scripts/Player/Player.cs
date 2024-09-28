@@ -101,9 +101,8 @@ namespace Assets.Scripts.Player
 
 
             //creating an instance of scene manager
-            sceneManager = MySceneManager.Instance;
 
-            if(CheckIfGrounded() == true)
+            if (CheckIfGrounded() == true)
                 currentState = JumpState.Instance;
             else
                 currentState = idleState;
@@ -150,8 +149,8 @@ namespace Assets.Scripts.Player
         private void HandlePlayerDeathRoutine()
         {
             // Destroy the player GameObject
-            sceneManager.OpenMenuScene();
-                
+            MySceneManager.Instance.OpenMenuScene();
+
             //proceed to menu scene
 
         }
@@ -257,7 +256,7 @@ namespace Assets.Scripts.Player
             }
             if (other.CompareTag("lvl2"))
             {
-                sceneManager.OpenGameScene("Scene_2");
+                MySceneManager.Instance.OpenGameScene("Scene_2");
             }
 
             currentState.HandleInput(this);

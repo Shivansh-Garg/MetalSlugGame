@@ -14,7 +14,7 @@ namespace Assets.Scripts.Game
         private Transform cameraTransform;      // Reference to the main camera's transform
         private Vector3 lastCameraPosition;     // Stores the camera's position in the previous frame
         private float textureUnitSizeX;         // The width of the background texture
-        private bool disabled = true;
+        private bool disabled = false;
         void Start()
         {
             cameraTransform = Camera.main.transform;
