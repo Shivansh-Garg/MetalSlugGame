@@ -62,6 +62,11 @@ namespace Assets.Scripts.Game
             //});
         }
 
+        public void GetCurrentScene()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
         private IEnumerator LoadGameWithDelay(string sceneName, float delay)
         {
             yield return new WaitForSeconds(delay);
