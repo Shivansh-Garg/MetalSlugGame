@@ -285,7 +285,7 @@ namespace Assets.Scripts.Player
 
         void OnTriggerExit2D(Collider2D other)
         {
-            if (other.CompareTag("spikes"))
+            if (other.CompareTag("spikes") )
             {
                 // Stop taking damage when leaving the spikes
                 isTakingDamage = false;
