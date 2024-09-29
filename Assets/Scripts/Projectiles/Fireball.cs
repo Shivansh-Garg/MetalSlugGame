@@ -13,10 +13,12 @@ namespace Assets.Scripts.Weapon
         [SerializeField]
         private float _fireballSpeed = 20.0f;
         private float moveDirection;
+        private Vector3 localScale;
 
         public void SetDirection(float direction,Vector3 localScale)
         {
             moveDirection = direction; // Ensure the direction is normalized
+            this.localScale = localScale;
         }
 
         // Start is called before the first frame update
@@ -33,8 +35,9 @@ namespace Assets.Scripts.Weapon
             Vector3 fireballDirection = new Vector3(moveDirection, 0, 0);
 
             transform.Translate(fireballDirection * _fireballSpeed * Time.deltaTime);
+            transform.localScale = localScale*5;
             //destroy the laser after some time
-            Destroy(this.gameObject, 2.0f); //we can also destroy an object after a certain time
+            Destroy(this.gameObject, 5.0f); //we can also destroy an object after a certain time
 
 
         }

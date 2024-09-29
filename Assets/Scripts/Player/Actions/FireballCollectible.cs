@@ -16,8 +16,7 @@ namespace Assets.Scripts.Player.Actions
             if (collision.tag == "Player")
             {
                 Debug.Log("FOund fireball");
-                collision.GetComponent<FireballAttack>().increaseFireballCount();
-                UIManager.Instance.UpdateFireballs(2);
+                collision.GetComponentInChildren<FireballAttack>().increaseFireballCount();
                 gameObject.SetActive(false);
             }
         }

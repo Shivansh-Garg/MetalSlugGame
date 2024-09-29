@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Assets.Scripts.Weapon;
+using Assets.Scripts.Game;
 
 namespace Assets.Scripts.Player.Actions
 {
@@ -13,7 +14,7 @@ namespace Assets.Scripts.Player.Actions
     {
         private float fireballSpawnCooldown = 1f;
         private float lastFireballSpawnTime;
-        private float fireballQuantity;
+        private int fireballQuantity;
 
 
         private Player player;
@@ -37,7 +38,15 @@ namespace Assets.Scripts.Player.Actions
 
         public void increaseFireballCount()
         {
+            UIManager.Instance.UpdateFireballs(fireballQuantity+1);
+
             fireballQuantity++;
+        }
+
+        public void decreaseFireballCount()
+        {
+            UIManager.Instance.UpdateFireballs(fireballQuantity-1);
+            fireballQuantity--;
         }
 
         public void SpawnFireball()
@@ -54,16 +63,21 @@ namespace Assets.Scripts.Player.Actions
             Vector3 fireballSpawningPos = transform.position;
             if (Time.time > fireballSpawnCooldown + lastFireballSpawnTime)
             {
+                if (fireballQuantity > 0)
+                {
 
-                //GameObject KunaiSprite = _kunaiPrefab;
-                //if (shootDirection < 0)
-                //{
-                //    KunaiSprite = _kunaiPrefab.transform.Rotate(0, 0, -180);
-                //}
-                GameObject fireballInstance = Instantiate(_fireballPrefab, fireballSpawningPos, Quaternion.identity);
-                fireballInstance.GetComponent<Fireball>().SetDirection(shootDirection,fireballLocalScale);
-                // Update the last spawn time
-                lastFireballSpawnTime = Time.time;
+                    UIManager.Instance.UpdateFireballs(fireballQuantity - 1);
+                    fireballQuantity--;
+                    //GameObject KunaiSprite = _kunaiPrefab;
+                    //if (shootDirection < 0)
+                    //{
+                    //    KunaiSprite = _kunaiPrefab.transform.Rotate(0, 0, -180);
+                    //}
+                    GameObject fireballInstance = Instantiate(_fireballPrefab, fireballSpawningPos, Quaternion.identity);
+                    fireballInstance.GetComponent<Fireball>().SetDirection(shootDirection,fireballLocalScale);
+                    // Update the last spawn time
+                    lastFireballSpawnTime = Time.time;
+                }
             }
         }
     }

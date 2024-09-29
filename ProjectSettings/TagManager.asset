@@ -17,6 +17,7 @@ TagManager:
   - lvl2
   - enemySword
   - lvl3
+  - playerFireball
   layers:
   - Default
   - TransparentFX

@@ -36,7 +36,7 @@ namespace Assets.Scripts.Player
         [SerializeField]
         public float playerSpeed = 7.0f;
         
-        private float playerScale = 0.3f;
+        private float playerScale = 0.4f;
         [SerializeField]
         private float jumpForce = 5.0f;
 
@@ -74,7 +74,7 @@ namespace Assets.Scripts.Player
             //initializing mono behaviour scripts
             ThrowKunai = GetComponentInChildren<KunaiAttack>(); // in C# cannot instanitiate script with Mono Behaviour using the new keyword
             playerHealth = GetComponent<PlayerHealth>();
-            ThrowFireball = GetComponent<FireballAttack>();
+            ThrowFireball = GetComponentInChildren<FireballAttack>();
 
             if (ThrowKunai == null)
             {
