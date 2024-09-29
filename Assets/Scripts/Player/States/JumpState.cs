@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,12 @@ namespace Assets.Scripts.Player.States
 {
     internal class JumpState:IPlayerState
     {
+        
+        void start()
+        {
+            
+        }
+
         private static JumpState _instance;
         public static JumpState Instance
         {
@@ -73,6 +80,10 @@ namespace Assets.Scripts.Player.States
             // Set walking animation in the Animator
             controller.animator.SetBool("running", false);
             controller.animator.SetBool("grounded", false);
+
+            
+            
+
         }
     }
 }

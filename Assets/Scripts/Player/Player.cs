@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Assets.Scripts.Weapon;
 using Assets.Scripts.Player.Actions;
 using Assets.Scripts.Game;
+using Game;
 
 namespace Assets.Scripts.Player
 {
@@ -15,8 +16,8 @@ namespace Assets.Scripts.Player
 
         public Animator animator;
         MySceneManager sceneManager;
-
-
+        public AudioManager audioManager;
+        
         //references to script
         private KunaiAttack ThrowKunai;
         private PlayerHealth playerHealth;
@@ -90,6 +91,7 @@ namespace Assets.Scripts.Player
                 swordCollider.enabled = false;
             }
 
+            audioManager = GameObject.FindGameObjectWithTag("audio").GetComponent<AudioManager>();
 
             // Initialize and cache all states
             idleState = IdleState.Instance;
@@ -250,6 +252,24 @@ namespace Assets.Scripts.Player
 
 
         }
+
+        public void playJumpAudio()
+        {
+            audioManager.playSFX(audioManager.jump);
+        }
+        public void playKunaiAudio()
+        {
+            audioManager.playSFX(audioManager.Kunai);
+        }
+        public void playFireballAudio()
+        {
+            audioManager.playSFX(audioManager.fireball);
+        }
+        public void playswordSound()
+        {
+            audioManager.playSFX(audioManager.sword);
+        }
+
 
         private void Jump()
         {
