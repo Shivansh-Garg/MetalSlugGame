@@ -29,9 +29,10 @@ namespace Assets.Scripts.Player.States
             bool MeeleKeyPressed = controller.checkIfAttacking();
             bool throwKeyPressed = controller.checkIfKunaiAttacking();
             bool isTakingDamage = controller.checkIfTakingDamage();
-
+            bool isCrouching = controller.checkIfCrouching();
 
             bool isPlayerDead = controller.checkIfPlayerDead();
+
             if (isPlayerDead)
             {
                 controller.ChangeState(DeadState.Instance);
@@ -52,6 +53,10 @@ namespace Assets.Scripts.Player.States
             else if(throwKeyPressed && !MeeleKeyPressed && isGrounded && !isTakingDamage && !isPlayerDead)
             {
                 controller.ChangeState(ThrowState.Instance);
+            }
+            else if (isCrouching && !throwKeyPressed && !MeeleKeyPressed && isGrounded && !isTakingDamage && !isPlayerDead)
+            {
+                controller.ChangeState(CrouchState.Instance);
             }
             // Check if the player is moving and not jumping 
             else if (Input.GetAxis("Horizontal") != 0 && isGrounded && !(Input.GetKeyDown(KeyCode.F)) &&!throwKeyPressed && !isTakingDamage && !isPlayerDead)

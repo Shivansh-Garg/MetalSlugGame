@@ -7,35 +7,40 @@ using UnityEngine;
 
 namespace Assets.Scripts.Player.States
 {
-    internal class TakingDamageState:IPlayerState
+    internal class CrouchState : IPlayerState
     {
-        private static TakingDamageState _instance;
-
-        public static TakingDamageState Instance
+        private static CrouchState _instance;
+        public static CrouchState Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new TakingDamageState();
+                    _instance = new CrouchState();
                 }
                 return _instance;
             }
         }
 
-        private TakingDamageState() { }
+        private CrouchState() { }
 
         public void HandleInput(Player controller, AnimatorStateInfo prevState)
         {
             bool isPlayerDead = controller.checkIfPlayerDead();
             bool isAttacking = controller.checkIfAttacking();
-            bool isTakingDamage =controller.checkIfTakingDamage();
             bool isGrounded = controller.CheckIfGrounded();
-            if (isPlayerDead )
+            bool isCrouching = controller.checkIfCrouching();
+
+            if (isPlayerDead)
             {
                 controller.ChangeState(DeadState.Instance);
             }
-            else if(!isPlayerDead && !isTakingDamage)
+
+           
+
+            // Handle transition from walk to idle
+
+            if ((!isAttacking && !isPlayerDead) || (!isAttacking && !isPlayerDead && !isCrouching))
             {
                 controller.ChangeState(IdleState.Instance);
             }
@@ -49,7 +54,7 @@ namespace Assets.Scripts.Player.States
             // Set walking animation in the Animator
             controller.animator.SetBool("running", false);
             controller.animator.SetBool("grounded", true);
-            controller.animator.SetTrigger("takingDamage");
+            controller.animator.SetTrigger("crouching");
         }
     }
 }
