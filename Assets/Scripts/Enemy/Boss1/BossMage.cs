@@ -19,7 +19,7 @@ public class BossMage : MonoBehaviour
 
     //Making references
     private Animator anime;
-    private EnemyPatrolling enemyPatrolling;
+    private EnemyChase enemyPatrolling;
     private PlayerHealth playerHealth;
 
 
@@ -30,7 +30,7 @@ public class BossMage : MonoBehaviour
     private void Awake()
     {
         anime = GetComponent<Animator>();
-        enemyPatrolling = GetComponentInParent<EnemyPatrolling>();
+        enemyPatrolling = GetComponentInParent<EnemyChase>();
 
         health = GetComponent<EnemyHealth>();
         if (health != null)

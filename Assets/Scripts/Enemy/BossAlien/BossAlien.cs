@@ -19,7 +19,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private Animator anime;
     private Animator GunShoot;
-    private EnemyPatrolling enemyPatrolling;
+    private EnemyChase enemyPatrolling;
 
     private EnemyHealth health;
 
@@ -27,7 +27,7 @@ public class NewBehaviourScript : MonoBehaviour
     private void Awake()
     {
         anime = GetComponent<Animator>();
-        enemyPatrolling = GetComponentInParent<EnemyPatrolling>();
+        enemyPatrolling = GetComponentInParent<EnemyChase>();
         GunShoot = GetComponentInChildren<Animator>();
 
         if(GunShoot == null)
@@ -57,7 +57,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (enemyPatrolling != null)
         {
-
+            anime.SetBool("isMoving", true);
             enemyPatrolling.enabled = !CanSeePlayer(); // Patrol if the player can't be seen
         }
     }
@@ -110,6 +110,7 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Destroy(other);
             anime.SetTrigger("hurt");
+            anime.SetBool("isMoving", true);
             Debug.Log("isTakingDamage from proj");
             health.TakeDamage(20.0f);
             if (health.GeCurrentHealth() == 0)
@@ -126,6 +127,8 @@ public class NewBehaviourScript : MonoBehaviour
         else if (other.CompareTag("PlayerMeeleWeapon"))
         {
             Debug.Log("isTakingDamage from proj");
+            anime.SetTrigger("hurt");
+            anime.SetBool("isMoving", true);
             health.TakeDamage(20.0f);
             if (health.GeCurrentHealth() == 0)
             {
