@@ -20,7 +20,7 @@ namespace Assets.Scripts.Player
         //references to script
         private KunaiAttack ThrowKunai;
         private PlayerHealth playerHealth;
-
+        private FireballAttack ThrowFireball;
 
         //references to gameObjects
         public GameObject sword;
@@ -35,8 +35,8 @@ namespace Assets.Scripts.Player
         private LayerMask groundLayer;
         [SerializeField]
         public float playerSpeed = 7.0f;
-        [SerializeField]
-        private float playerScale = 0.4f;
+        
+        private float playerScale = 0.3f;
         [SerializeField]
         private float jumpForce = 5.0f;
 
@@ -46,6 +46,7 @@ namespace Assets.Scripts.Player
         private bool isTakingDamage;
         private bool isTakingTrapDamage = false;
         private bool isPlayerDead = false;
+        private bool isCrouching = false;
 
         public IPlayerState idleState;
         public IPlayerState walkState;
@@ -73,6 +74,7 @@ namespace Assets.Scripts.Player
             //initializing mono behaviour scripts
             ThrowKunai = GetComponentInChildren<KunaiAttack>(); // in C# cannot instanitiate script with Mono Behaviour using the new keyword
             playerHealth = GetComponent<PlayerHealth>();
+            ThrowFireball = GetComponent<FireballAttack>();
 
             if (ThrowKunai == null)
             {
@@ -177,6 +179,22 @@ namespace Assets.Scripts.Player
                 Jump();
             }
 
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                Melee();
+
+                isCrouching = true;
+
+            }
+            else if (Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                isCrouching = false;
+               
+            }
+            else
+            {
+                isCrouching = false;
+            }
 
             //animator.SetBool("running", horizontalInput != 0);
             //animator.SetBool("grounded", grounded);
@@ -220,6 +238,21 @@ namespace Assets.Scripts.Player
                 isKunaiAttacking = false;
             }
 
+            if (Input.GetKey(KeyCode.Z))
+            {
+                FireballAttack();
+                isKunaiAttacking = true;
+            }
+            else if (Input.GetKeyUp(KeyCode.Z))
+            {
+                isKunaiAttacking = false;
+            }
+            else
+            {
+                isKunaiAttacking = false;
+            }
+
+
         }
 
         private void Jump()
@@ -244,6 +277,11 @@ namespace Assets.Scripts.Player
 
         }
 
+        private void FireballAttack()
+        {
+            ThrowFireball.SpawnFireball();
+        }
+
 
         // Detect collision with damaging objects
         void OnTriggerEnter2D(Collider2D other)
@@ -251,12 +289,16 @@ namespace Assets.Scripts.Player
             if (other.CompareTag("EnemyProjectiles"))
             {
                 isTakingDamage = true;
-                playerHealth.q(10.0f);
+                playerHealth.TakeDamage(10.0f);
 
             }
             if (other.CompareTag("lvl2"))
             {
                 MySceneManager.Instance.OpenGameScene("Scene_2");
+            }
+            else if (other.CompareTag("lvl3"))
+            {
+                MySceneManager.Instance.OpenGameScene("Scene_3");
             }
 
             currentState.HandleInput(this);
@@ -337,7 +379,10 @@ namespace Assets.Scripts.Player
         {
             return isPlayerDead;
         }
-
+        public bool checkIfCrouching()
+        {
+            return isCrouching;
+        }
 
         /**
          * Changes the  state of player
