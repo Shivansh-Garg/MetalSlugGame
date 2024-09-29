@@ -50,8 +50,15 @@ public class EnemyPatrolling : MonoBehaviour
     }
 
     private void EnemyMove(int inDirection)
-    {   
-        anime.SetBool("isMoving",true);
+    {
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", true);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
         enemy.localScale = new Vector3(Mathf.Abs(inintialScale.x) * inDirection, inintialScale.y, inintialScale.z);
 
         // will make the enemy move
@@ -61,13 +68,27 @@ public class EnemyPatrolling : MonoBehaviour
 
     private void changeDirection()
     {
-        anime.SetBool("isMoving", false);
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", false);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
         inLeftDirection = !inLeftDirection;
 
     }
 
     private void OnDisable()
     {
-        anime.SetBool("isMoving", false);
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", false);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
     }
 }

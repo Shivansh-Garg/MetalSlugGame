@@ -17,6 +17,8 @@ namespace Assets.Scripts.Game
         public TMP_Text FireballText;
         public TMP_Text KunaiText;
 
+        private int _scoreTillNow = 0;
+
 
         public RectTransform fader;
         private static UIManager _instance;
@@ -56,10 +58,11 @@ namespace Assets.Scripts.Game
 
         }
 
-
+        
         public void UpdateScoreUI(int score)
         {
-            ScoreText.text = score.ToString();
+            _scoreTillNow = _scoreTillNow + score;
+            ScoreText.text = _scoreTillNow.ToString();
         }
 
 

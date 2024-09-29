@@ -40,7 +40,7 @@ namespace Assets.Scripts.Player.States
 
             // Handle transition from walk to idle
 
-            if ((!isAttacking && !isPlayerDead) || (!isAttacking && !isPlayerDead && !isCrouching))
+            if ((!isAttacking && !isPlayerDead) || !isCrouching)
             {
                 controller.ChangeState(IdleState.Instance);
             }
@@ -54,7 +54,7 @@ namespace Assets.Scripts.Player.States
             // Set walking animation in the Animator
             controller.animator.SetBool("running", false);
             controller.animator.SetBool("grounded", true);
-            controller.animator.SetTrigger("crouching");
+            controller.animator.SetTrigger("crouch");
         }
     }
 }

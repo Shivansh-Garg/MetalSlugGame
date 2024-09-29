@@ -1,4 +1,5 @@
 using Assets.Scripts.Enemy;
+using Assets.Scripts.Game;
 using Assets.Scripts.Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,6 @@ public class BossEnemy1 : MonoBehaviour
         health = GetComponent<EnemyHealth>();
         if (health != null)
         {
-            Debug.Log("boss health found0");
             health.SetHealth(150.0f);
         }
         else
@@ -59,7 +59,7 @@ public class BossEnemy1 : MonoBehaviour
         // attack when player is in sight and curret timer is greater than coolDown timer
         if (CanSeePlayer())
         {
-            if (currentTime >= attackCoolDownTimer)
+            if (currentTime >= attackCoolDownTimer )
             {
                 PlayerDamaged(); // Apply damage to the player
             }
@@ -74,26 +74,34 @@ public class BossEnemy1 : MonoBehaviour
 
     private bool CanSeePlayer()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(boxCollider2D.bounds.center + transform.right * rangeOfAttack * transform.localScale.x * colliderPositionObject,
+        RaycastHit2D hit = Physics2D.BoxCast(
+            boxCollider2D.bounds.center + transform.right * rangeOfAttack * transform.localScale.x * colliderPositionObject,
             new Vector3(boxCollider2D.bounds.size.x * rangeOfAttack, boxCollider2D.bounds.size.y, boxCollider2D.bounds.size.z),
             0, Vector2.left, 0, playerLayer);
 
         if (hit.collider != null)
         {
-            // Check if playerHealth is already set, if not, initialize it
-            if (playerHealth == null)
+            // Check if the hit object has the "Player" tag
+            if (hit.collider.CompareTag("Player"))
             {
-                playerHealth = hit.transform.GetComponent<PlayerHealth>();
-
+                // Check if playerHealth is already set, if not, initialize it
                 if (playerHealth == null)
                 {
-                    Debug.LogError("PlayerHealth component not found on the player!");
+                    playerHealth = hit.transform.GetComponent<PlayerHealth>();
+
+                    if (playerHealth == null)
+                    {
+                        Debug.LogError("PlayerHealth component not found on the player!");
+                    }
                 }
+
+                return true; // The player is in sight
             }
         }
 
-        return hit.collider != null;
+        return false; // Player is not in sight or not hit
     }
+
 
     private void OnDrawGizmos()
     {
@@ -107,7 +115,7 @@ public class BossEnemy1 : MonoBehaviour
         currentTime = 0; // attack performed
         anime.SetTrigger("attack");
 
-        if (CanSeePlayer() && playerHealth != null)
+        if (CanSeePlayer() && (playerHealth != null))
         {
             // Apply damage only if the player is still in range
             playerHealth.TakeDamage(attackPower);
@@ -130,7 +138,7 @@ public class BossEnemy1 : MonoBehaviour
             {
                 anime.SetTrigger("died");
                 Debug.Log("Inside if "+health.GeCurrentHealth().ToString());
-
+                UIManager.Instance.UpdateScoreUI(300);
 
 
                 _isDead = true;
@@ -145,12 +153,28 @@ public class BossEnemy1 : MonoBehaviour
             if (health.GeCurrentHealth() <= 0)
             {
                 anime.SetTrigger("died");
+                UIManager.Instance.UpdateScoreUI(300);
 
 
                 Destroy(gameObject);
                 _isDead = true;
             }
 
+        }
+        else if (other.CompareTag("PlayerFireball"))
+        {
+            Debug.Log("isTakingDamage from proj");
+            health.TakeDamage(75.0f);
+            if (health.GeCurrentHealth() == 0)
+            {
+                UIManager.Instance.UpdateScoreUI(75);
+                anime.SetTrigger("died");
+
+
+                Destroy(gameObject);
+                _isDead = true;
+            }
+            //isTakingDamage = false;
         }
         else
         {

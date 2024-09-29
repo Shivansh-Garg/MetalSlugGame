@@ -233,12 +233,8 @@ namespace Assets.Scripts.Player
             else if(Input.GetKeyUp(KeyCode.Q)){
                 isKunaiAttacking = false;
             }
-            else
-            {
-                isKunaiAttacking = false;
-            }
 
-            if (Input.GetKey(KeyCode.Z))
+            else if (Input.GetKey(KeyCode.Z))
             {
                 FireballAttack();
                 isKunaiAttacking = true;
@@ -300,6 +296,10 @@ namespace Assets.Scripts.Player
             {
                 MySceneManager.Instance.OpenGameScene("Scene_3");
             }
+            else if (other.CompareTag("Deathbar"))
+            {
+                playerHealth.TakeDamage(100.0f);
+            }
 
             currentState.HandleInput(this);
             currentState.UpdateState(this);
@@ -319,6 +319,7 @@ namespace Assets.Scripts.Player
                 }
 
             }
+            
 
 
             currentState.HandleInput(this);
@@ -344,7 +345,7 @@ namespace Assets.Scripts.Player
         {
             while (isTakingTrapDamage)
             {
-                playerHealth.TakeDamage(10.0f);
+                playerHealth.TakeDamage(20.0f);
 
                 // Wait for a specific interval before taking damage again
                 yield return new WaitForSeconds(1.0f); // Change 1.0f to adjust the damage frequency

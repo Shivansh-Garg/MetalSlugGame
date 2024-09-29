@@ -80,7 +80,15 @@ public class EnemyChase : MonoBehaviour
 
     private void EnemyMove(int direction)
     {
-        anime.SetBool("isMoving", true);
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", true);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
+
         enemy.localScale = new Vector3(Mathf.Abs(initialScale.x) * direction, initialScale.y, initialScale.z);
 
         // Move the enemy
@@ -90,7 +98,16 @@ public class EnemyChase : MonoBehaviour
 
     private void ChangeDirection()
     {
-        anime.SetBool("isMoving", false);
+
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", false);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
+
         inLeftDirection = !inLeftDirection;
 
         // Flip the enemy's scale based on the direction
@@ -99,6 +116,14 @@ public class EnemyChase : MonoBehaviour
 
     private void OnDisable()
     {
-        anime.SetBool("isMoving", false);
+        if (anime != null)
+        {
+            anime.SetBool("isMoving", false);
+        }
+        else
+        {
+            Debug.LogWarning("Animator 'anime' is not assigned.");
+        }
+
     }
 }

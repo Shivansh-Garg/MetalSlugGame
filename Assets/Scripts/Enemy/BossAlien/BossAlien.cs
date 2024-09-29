@@ -1,4 +1,5 @@
 using Assets.Scripts.Enemy;
+using Assets.Scripts.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -114,7 +115,7 @@ public class NewBehaviourScript : MonoBehaviour
             if (health.GeCurrentHealth() == 0)
             {
                 anime.SetTrigger("died");
-
+                UIManager.Instance.UpdateScoreUI(500);
 
 
                 _isDead = true;
@@ -130,12 +131,28 @@ public class NewBehaviourScript : MonoBehaviour
             if (health.GeCurrentHealth() == 0)
             {
                 anime.SetTrigger("died");
+                UIManager.Instance.UpdateScoreUI(500);
 
 
                 Destroy(gameObject);
                 _isDead = true;
             }
 
+        }
+        else if (other.CompareTag("PlayerFireball"))
+        {
+            Debug.Log("isTakingDamage from proj");
+            health.TakeDamage(75.0f);
+            if (health.GeCurrentHealth() == 0)
+            {
+                UIManager.Instance.UpdateScoreUI(75);
+                anime.SetTrigger("died");
+
+
+                Destroy(gameObject);
+                _isDead = true;
+            }
+            //isTakingDamage = false;
         }
         else
         {

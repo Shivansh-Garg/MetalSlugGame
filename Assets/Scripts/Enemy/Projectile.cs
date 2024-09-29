@@ -5,7 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private bool collide;
-    [SerializeField] private float projectileSpeed = 5f;
+    private float projectileSpeed = 4f;
     private Animator anime;
     private BoxCollider2D boxCollider2D;
     private float changeDirection;

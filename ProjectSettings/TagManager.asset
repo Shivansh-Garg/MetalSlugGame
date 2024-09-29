@@ -16,6 +16,9 @@ TagManager:
   - PlayerMeeleWeapon
   - lvl2
   - enemySword
+  - lvl3
+  - PlayerFireball
+  - Deathbar
   layers:
   - Default
   - TransparentFX

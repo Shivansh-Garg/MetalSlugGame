@@ -1,4 +1,5 @@
 using Assets.Scripts.Enemy;
+using Assets.Scripts.Game;
 using Assets.Scripts.Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -91,6 +92,7 @@ public class RangedEnemy : MonoBehaviour
 
     public void HandleDeadCondition()
         {
+            UIManager.Instance.UpdateScoreUI(100);
             gameObject.SetActive(false);  
         }
     
@@ -108,8 +110,8 @@ public class RangedEnemy : MonoBehaviour
                 anime.SetTrigger("died");
 
 
-               
-                _isDead = true;
+
+                    _isDead = true;
                 //Destroy(gameObject);
             }
 
@@ -121,14 +123,30 @@ public class RangedEnemy : MonoBehaviour
             if (health.GeCurrentHealth() == 0)
             {
                 anime.SetTrigger("died");
+                    UIManager.Instance.UpdateScoreUI(100);
 
-                
-                Destroy(gameObject);
+
+                    Destroy(gameObject);
                 _isDead = true;
             }
 
         }
-        else
+        else if (other.CompareTag("PlayerFireball"))
+        {
+            Debug.Log("isTakingDamage from proj");
+            health.TakeDamage(75.0f);
+            if (health.GeCurrentHealth() == 0)
+            {
+                UIManager.Instance.UpdateScoreUI(75);
+                anime.SetTrigger("died");
+
+
+                Destroy(gameObject);
+                _isDead = true;
+            }
+            //isTakingDamage = false;
+        }
+            else
         {
             //isTakingDamage = false;
         }
