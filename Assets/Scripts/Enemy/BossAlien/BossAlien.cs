@@ -57,7 +57,6 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (enemyPatrolling != null)
         {
-            anime.SetBool("isMoving", true);
             enemyPatrolling.enabled = !CanSeePlayer(); // Patrol if the player can't be seen
         }
     }
@@ -110,7 +109,6 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Destroy(other);
             anime.SetTrigger("hurt");
-            anime.SetBool("isMoving", true);
             Debug.Log("isTakingDamage from proj");
             health.TakeDamage(20.0f);
             if (health.GeCurrentHealth() == 0)
@@ -128,7 +126,6 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Debug.Log("isTakingDamage from proj");
             anime.SetTrigger("hurt");
-            anime.SetBool("isMoving", true);
             health.TakeDamage(20.0f);
             if (health.GeCurrentHealth() == 0)
             {

@@ -33,12 +33,14 @@ public class EnemyChase : MonoBehaviour
                 if (enemy.position.x > playerTransform.position.x)
                 {
                     // Move left
+                    anime.SetBool("isMoving", true);
                     enemy.position += Vector3.left * movementSpeed * Time.deltaTime;
                     enemy.localScale = new Vector3(-Mathf.Abs(initialScale.x), initialScale.y, initialScale.z);
                 }
                 else if (enemy.position.x < playerTransform.position.x)
                 {
                     // Move right
+                    anime.SetBool("isMoving", true);
                     enemy.position += Vector3.right * movementSpeed * Time.deltaTime;
                     enemy.localScale = new Vector3(Mathf.Abs(initialScale.x), initialScale.y, initialScale.z);
                 }
